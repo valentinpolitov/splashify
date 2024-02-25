@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createWriteStream } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { createCanvas, type Image } from "canvas";
 
 import type { GenOptions } from "@/schemas/gen";
@@ -10,7 +10,6 @@ export function drawImage(
   device: Device,
   image: Image,
   orientation: "portrait" | "landscape",
-  outdir: string,
   options: GenOptions,
 ): Promise<string> {
   return new Promise<string>((resolve) => {
@@ -55,12 +54,31 @@ export function drawImage(
       ].join(":"),
     );
 
-    const filename = hash.digest("hex") + ".png";
-    const filePath = join(outdir, filename);
+    let filename = hash.digest("hex");
+    if (options.prefix) {
+      filename = `${options.prefix}-${filename}`;
+    }
+    if (options.includeOrientation) {
+      filename += `-${orientation}`;
+    }
+    filename += ".png";
+
+    const cwd = path.resolve(options.cwd);
+    const filePath = path.join(path.resolve(cwd, options.outdir), filename);
 
     const stream = createWriteStream(filePath);
     canvas.createPNGStream().pipe(stream);
 
-    stream.on("finish", () => resolve(filePath));
+    let url = path.relative(cwd, filePath);
+
+    if (options.public) {
+      const [segment, ...rest] = url.split(path.sep);
+
+      if (segment === "public") {
+        url = path.join(...rest);
+      }
+    }
+
+    stream.on("finish", () => resolve(url));
   });
 }

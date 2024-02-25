@@ -57,9 +57,33 @@ export const gen = new Command()
     "splashscreens",
   )
   .option("-l, --hash-length <hashLength>", "length of the hash", "8")
+  .option("-p, --prefix <prefix>", "prefix for the generated images filenames")
+  .option(
+    "--include-orientation",
+    "include orientation in the generated images filenames",
+    false,
+  )
+  .option(
+    "-N, --nofile",
+    "do not include file with generated images urls and media queries",
+    false,
+  )
+  .option(
+    "-f, --file-name <fileName>",
+    "output file name with generated images urls and media queries",
+  )
+  .option(
+    "-F, --file-outdir <fileOutdir>",
+    "output directory for file with generated images urls and media queries",
+  )
+  .option(
+    "-P, --public",
+    'when output directory is in public folder, this will truncate "public/" segment from generated url',
+    true,
+  )
   .option(
     "--html",
-    "output HTML file with generated images tags. If no other output option is provided, this will be the default",
+    "output HTML file with generated images tags. If --no-file is not specified and no other output option is provided, this will be the default",
     false,
   )
   .option(
@@ -110,7 +134,7 @@ export const gen = new Command()
 
       if (!existsSync(outdir)) {
         try {
-          mkdirSync(outdir);
+          mkdirSync(outdir, { recursive: true });
           logger.info(`Created directory ${outdir}`);
         } catch (error) {
           logger.error(
@@ -152,20 +176,46 @@ export const gen = new Command()
 
       for (const device of options.devices) {
         const [portrait, landscape] = await Promise.all([
-          drawImage(device, image, "portrait", outdir, options),
-          drawImage(device, image, "landscape", outdir, options),
+          drawImage(device, image, "portrait", options),
+          drawImage(device, image, "landscape", options),
         ]);
+
+        if (options.nofile) continue;
 
         result.push(
           {
-            url: path.relative(cwd, portrait),
+            url: portrait,
             media: getMediaString(device, "portrait"),
           },
           {
-            url: path.relative(cwd, landscape),
+            url: landscape,
             media: getMediaString(device, "landscape"),
           },
         );
+      }
+
+      if (options.nofile) {
+        spinner.succeed("Done");
+        return;
+      }
+
+      const fileName = options.fileName || "splashscreens";
+      let filePath = outdir;
+
+      if (options.fileOutdir) {
+        filePath = path.resolve(cwd, options.fileOutdir);
+
+        if (!existsSync(filePath)) {
+          try {
+            mkdirSync(filePath, { recursive: true });
+            logger.info(`Created directory ${filePath}`);
+          } catch (error) {
+            logger.error(
+              `An error occurred while creating ${filePath} directory. File will be saved in ${outdir} directory.`,
+            );
+            filePath = outdir;
+          }
+        }
       }
 
       if (
@@ -179,20 +229,35 @@ export const gen = new Command()
           )
           .join("\n");
 
-        writeFileSync(path.join(outdir, "splashscreens.html"), html);
+        const file = path.join(
+          filePath,
+          path.extname(fileName) === ".html" ? fileName : fileName + ".html",
+        );
+
+        writeFileSync(file, html);
       }
 
       const resultString = JSON.stringify(result, null, 2);
 
       if (options.json) {
-        writeFileSync(path.join(outdir, "splashscreens.json"), resultString);
+        const file = path.join(
+          filePath,
+          path.extname(fileName) === ".json" ? fileName : fileName + ".json",
+        );
+
+        writeFileSync(file, resultString);
       }
 
       if (options.cjs) {
         const ext = options.esm ? ".cjs" : ".js";
 
+        const file = path.join(
+          filePath,
+          path.extname(fileName) === ext ? fileName : fileName + ext,
+        );
+
         writeFileSync(
-          path.join(outdir, "splashscreens" + ext),
+          file,
           [
             '/** @type {Record<"url" | "media", string>[]} */',
             `module.exports = ${resultString};`,
@@ -203,8 +268,13 @@ export const gen = new Command()
       if (options.esm) {
         const ext = options.cjs ? ".mjs" : ".js";
 
+        const file = path.join(
+          filePath,
+          path.extname(fileName) === ext ? fileName : fileName + ext,
+        );
+
         writeFileSync(
-          path.join(outdir, "splashscreens" + ext),
+          file,
           [
             '/** @type {Record<"url" | "media", string>[]} */',
             `export const splashscreens = ${resultString};`,
@@ -213,8 +283,13 @@ export const gen = new Command()
       }
 
       if (options.ts) {
+        const file = path.join(
+          filePath,
+          path.extname(fileName) === ".ts" ? fileName : fileName + ".ts",
+        );
+
         writeFileSync(
-          path.join(outdir, "splashscreens.ts"),
+          file,
           `export const splashscreens: Record<"url" | "media", string>[] = ${resultString};`,
         );
       }
