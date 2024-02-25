@@ -58,8 +58,13 @@ export const gen = new Command()
   )
   .option("-l, --hash-length <hashLength>", "length of the hash", "8")
   .option(
+    "--html",
+    "output HTML file with generated images tags. If no other output option is provided, this will be the default",
+    false,
+  )
+  .option(
     "--json",
-    "output JSON file with generated images urls and media queries. If no other output option is provided, this will be the default.",
+    "output JSON file with generated images urls and media queries",
     false,
   )
   .option(
@@ -163,12 +168,23 @@ export const gen = new Command()
         );
       }
 
-      const resultString = JSON.stringify(result, null, 2);
-
       if (
-        options.json ||
+        options.html ||
         (!options.json && !options.ts && !options.cjs && !options.esm)
       ) {
+        const html = result
+          .map(
+            (screen) =>
+              `<link rel="apple-touch-startup-image" href="${screen.url}" media="${screen.media}">`,
+          )
+          .join("\n");
+
+        writeFileSync(path.join(outdir, "splashscreens.html"), html);
+      }
+
+      const resultString = JSON.stringify(result, null, 2);
+
+      if (options.json) {
         writeFileSync(path.join(outdir, "splashscreens.json"), resultString);
       }
 

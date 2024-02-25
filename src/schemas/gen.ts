@@ -38,6 +38,7 @@ export const genOptionsSchema = z
     scale: z.string().pipe(z.coerce.number().positive()),
     outdir: z.string(),
     hashLength: z.string().pipe(z.coerce.number().int().min(4)),
+    html: z.boolean(),
     json: z.boolean(),
     ts: z.boolean(),
     cjs: z.boolean(),
