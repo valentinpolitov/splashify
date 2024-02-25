@@ -1,6 +1,6 @@
 {
   "name": "splashify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate launch screens for your app",
   "publishConfig": {
     "access": "public"
@@ -41,6 +41,8 @@
     "lint:fix": "eslint . --fix",
     "format:write": "prettier --write \"**/*.{ts,json}\"",
     "format:check": "prettier --check \"**/*.{ts,json}\"",
+    "release": "changeset version",
+    "pub:release": "npm run build && pnpm publish --access public",
     "clean": "rimraf dist splashscreens",
     "test": "vitest run"
   },
@@ -54,6 +56,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.1",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.20",

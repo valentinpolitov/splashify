@@ -1,0 +1,5 @@
+---
+"splashify": patch
+---
+
+New options
