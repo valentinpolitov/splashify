@@ -64,9 +64,8 @@ export const gen = new Command()
     false,
   )
   .option(
-    "-N, --nofile",
+    "-N, --no-file",
     "do not include file with generated images urls and media queries",
-    false,
   )
   .option(
     "-f, --file-name <fileName>",
@@ -180,7 +179,7 @@ export const gen = new Command()
           drawImage(device, image, "landscape", options),
         ]);
 
-        if (options.nofile) continue;
+        if (!options.file) continue;
 
         result.push(
           {
@@ -194,7 +193,7 @@ export const gen = new Command()
         );
       }
 
-      if (options.nofile) {
+      if (!options.file) {
         spinner.succeed("Done");
         return;
       }

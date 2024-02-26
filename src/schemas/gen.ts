@@ -40,7 +40,7 @@ export const genOptionsSchema = z
     hashLength: z.string().pipe(z.coerce.number().int().min(4)),
     prefix: z.string().optional(),
     includeOrientation: z.boolean(),
-    nofile: z.boolean(),
+    file: z.boolean(),
     fileName: z.string().optional(),
     fileOutdir: z.string().optional(),
     public: z.boolean(),
