@@ -4,6 +4,8 @@ import { Command } from "commander";
 import { gen } from "@/commands/gen";
 import { getPackageInfo } from "@/utils/get-package-info";
 
+import "@total-typescript/ts-reset";
+
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
 

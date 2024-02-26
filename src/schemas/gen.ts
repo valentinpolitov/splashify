@@ -30,8 +30,11 @@ const imagePathSchema = z
 export const genOptionsSchema = z
   .object({
     devices: z.array(deviceSchema),
+    portraitOnly: z.boolean(),
+    landscapeOnly: z.boolean(),
     includeDefaults: z.boolean(),
-    keepStale: z.boolean(),
+    clean: z.boolean(),
+    keep: z.boolean(),
     cwd: z.string(),
     input: imagePathSchema,
     bgColor: z.string().optional(),
@@ -47,6 +50,7 @@ export const genOptionsSchema = z
     html: z.boolean(),
     json: z.boolean(),
     ts: z.boolean(),
+    js: z.boolean(),
     cjs: z.boolean(),
     esm: z.boolean(),
   })

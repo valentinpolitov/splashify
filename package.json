@@ -1,6 +1,6 @@
 {
   "name": "splashify",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Generate launch screens for your app",
   "publishConfig": {
     "access": "public"
