@@ -2,6 +2,8 @@
 
 A CLI for generating launch screens for any device.
 
+![hero](https://repository-images.githubusercontent.com/763116014/b9130dc4-a8ff-4cf8-b7f2-b268b7e57ce6)
+
 ## Usage
 
 Use the `generate` command to generate launch screens for any device.
