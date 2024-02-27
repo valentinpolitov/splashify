@@ -1,5 +1,7 @@
 # splashify
 
+[![npm version](https://badge.fury.io/js/splashify.svg)](https://badge.fury.io/js/splashify)
+
 A CLI for generating launch screens for any device.
 
 ![hero](https://repository-images.githubusercontent.com/763116014/b9130dc4-a8ff-4cf8-b7f2-b268b7e57ce6)
