@@ -155,6 +155,24 @@ export const gen = new Command()
 
       const image = await loadImage(imagePath);
 
+      // Scale SVG image to fit the widest device
+      if (path.extname(imagePath).toLowerCase() === ".svg") {
+        const widest = options.devices.reduce((result, device) => {
+          const width = device.width * device.dpi;
+
+          if (result < widest) {
+            result = width;
+          }
+
+          return result;
+        }, image.width);
+
+        if (image.width < widest) {
+          image.height = (widest * image.width) / image.height;
+          image.width = widest;
+        }
+      }
+
       const result: Record<"url" | "media", string>[] = [];
 
       for (const device of options.devices) {
