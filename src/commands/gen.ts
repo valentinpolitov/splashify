@@ -22,7 +22,7 @@ export const gen = new Command()
   .description("Generate launch screens for web apps")
   .argument(
     "[devices...]",
-    "the devices to generate launch screens for. Format: {width}x{height}@{scale}",
+    "the devices to generate launch screens for. Format: {width}x{height}@{dpi}",
     defaultDevices,
   )
   .option("--portrait-only", "generate only portrait images", false)
