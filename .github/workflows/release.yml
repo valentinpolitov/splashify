@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install NPM Dependencies
         run: npm ci
@@ -29,9 +29,17 @@ jobs:
       - name: Build the package
         run: npm run build
 
+      - name: Creating .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+
       - name: Create Version PR or Publish to NPM
         id: changesets
-        uses: changesets/action@v1.4.1
+        uses: changesets/action@v1
         with:
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
@@ -39,5 +47,4 @@ jobs:
           publish: npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NODE_ENV: "production"
