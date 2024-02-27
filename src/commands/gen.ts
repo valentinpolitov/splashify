@@ -160,7 +160,7 @@ export const gen = new Command()
         const widest = options.devices.reduce((result, device) => {
           const width = device.width * device.dpi;
 
-          if (result < widest) {
+          if (result < width) {
             result = width;
           }
 
