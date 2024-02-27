@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { loadImage } from "canvas";
 import { Command } from "commander";
@@ -8,6 +8,7 @@ import { iOSDevices } from "@/devices/ios";
 import { genOptionsSchema } from "@/schemas/gen";
 import { drawImage } from "@/utils/canvas";
 import { getDeviceString, getMediaString } from "@/utils/device";
+import { downloadImage } from "@/utils/download";
 import { handleError } from "@/utils/handle-error";
 import { logger } from "@/utils/logger";
 import { manageExistingFiles } from "@/utils/manage-existing-files";
@@ -123,6 +124,15 @@ export const gen = new Command()
 
       let imagePath = path.resolve(cwd, options.input);
 
+      const isUrl =
+        options.input.startsWith("http://") ||
+        options.input.startsWith("https://") ||
+        options.input.startsWith("ftp://");
+
+      if (isUrl) {
+        imagePath = await downloadImage(options.input, cwd);
+      }
+
       if (!existsSync(imagePath)) {
         imagePath = path.resolve(options.input);
       }
@@ -199,6 +209,16 @@ export const gen = new Command()
             url: landscape,
             media: getMediaString(device, "landscape"),
           });
+        }
+      }
+
+      if (isUrl) {
+        try {
+          unlinkSync(imagePath);
+        } catch (error) {
+          logger.error(
+            `An error occurred while removing the temporary image file at ${imagePath}. Please remove it manually.`,
+          );
         }
       }
 
