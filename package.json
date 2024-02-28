@@ -43,7 +43,7 @@
     "format:check": "prettier --check \"**/*.{ts,json}\"",
     "release": "changeset version",
     "pub:release": "npm run build && pnpm publish --access public",
-    "clean": "rimraf dist splashscreens",
+    "clean": "rimraf dist .splashify",
     "test": "vitest run"
   },
   "dependencies": {

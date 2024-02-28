@@ -21,8 +21,8 @@ export function drawImage(
     const canvas = createCanvas(width * device.dpi, height * device.dpi);
     const ctx = canvas.getContext("2d");
 
-    if (options.bgColor && options.bgColor !== "transparent") {
-      ctx.fillStyle = options.bgColor;
+    if (options.background && options.background !== "transparent") {
+      ctx.fillStyle = options.background;
     }
 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -46,7 +46,7 @@ export function drawImage(
     hash.update(
       [
         options.input,
-        options.bgColor || "transparent",
+        options.background || "transparent",
         width,
         height,
         device.dpi,

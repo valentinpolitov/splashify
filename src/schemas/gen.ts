@@ -29,7 +29,7 @@ const imagePathSchema = z
 
 export const genOptionsSchema = z
   .object({
-    devices: z.array(deviceSchema),
+    devices: z.array(deviceSchema).nonempty(),
     portraitOnly: z.boolean(),
     landscapeOnly: z.boolean(),
     includeDefaults: z.boolean(),
@@ -37,15 +37,15 @@ export const genOptionsSchema = z
     keep: z.boolean(),
     cwd: z.string(),
     input: imagePathSchema,
-    bgColor: z.string().optional(),
+    background: z.string().optional(),
     scale: z.string().pipe(z.coerce.number().positive()),
     outdir: z.string(),
     hashLength: z.string().pipe(z.coerce.number().int().min(4)),
     prefix: z.string().optional(),
     includeOrientation: z.boolean(),
-    file: z.boolean(),
-    fileName: z.string().optional(),
-    fileOutdir: z.string().optional(),
+    def: z.boolean(),
+    defFile: z.string(),
+    defOutdir: z.string(),
     public: z.boolean(),
     html: z.boolean(),
     json: z.boolean(),

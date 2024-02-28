@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
-import { writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import ora from "ora";
 
@@ -12,11 +12,39 @@ class BadImageException extends Error {
   }
 }
 
-export async function downloadImage(url: string, cwd: string): Promise<string> {
+export async function downloadImage(url: string): Promise<string> {
   const spinner = ora(`Fetching the image from ${url}`);
 
   try {
     spinner.start();
+
+    const downloadsDir = path.join(process.cwd(), ".splashify", "downloads");
+
+    if (!existsSync(downloadsDir)) {
+      try {
+        mkdirSync(downloadsDir, { recursive: true });
+      } catch {
+        throw new Error(
+          `An error occurred while creating temp directory at ${downloadsDir}. Please try again.`,
+        );
+      }
+    }
+
+    const file = path.parse(url);
+    const hash = createHash("shake256", { outputLength: 8 })
+      .update(url)
+      .digest("hex");
+
+    const imagePath = path.join(
+      downloadsDir,
+      `${file.name}-${hash}${file.ext}`,
+    );
+
+    if (existsSync(imagePath)) {
+      spinner.succeed(`Image already downloaded at ${imagePath}`);
+      return imagePath;
+    }
+
     const response = await fetch(url);
     const contentType = response.headers.get("content-type");
     const contentLength = response.headers.get("content-length");
@@ -49,11 +77,10 @@ export async function downloadImage(url: string, cwd: string): Promise<string> {
       }
     }
 
-    const buffer = await response.arrayBuffer();
-    const imagePath = path.join(cwd, randomUUID() + path.extname(url));
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const nodeBuffer = Buffer.from(buffer);
-    writeFileSync(imagePath, nodeBuffer);
+    writeFileSync(imagePath, buffer);
 
     spinner.succeed(`Image fetched and saved at ${imagePath}`);
 
