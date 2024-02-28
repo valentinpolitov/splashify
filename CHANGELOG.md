@@ -1,5 +1,18 @@
 # splashify
 
+## 0.3.0
+
+### Minor Changes
+
+- [`7cc52ea`](https://github.com/valentinpolitov/splashify/commit/7cc52ea7788f912e5def77c1eaceac7a104cdebb) Thanks [@valentinpolitov](https://github.com/valentinpolitov)! - [Breaking Changes]
+  Added: `--no-public`
+  Removed: `-P` alias from `--public`
+  Renamed:
+  `--bg-color` -> `--background`
+  `--no-file` -> `--no-def`
+  `--file-name` -> `--def-file`
+  `--file-outdir` -> `--def-outdir`
+
 ## 0.2.2
 
 ### Patch Changes
