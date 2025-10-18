@@ -1,13 +1,19 @@
 import type { Device } from "@/utils/device";
 
 export const iOSDevices: Device[] = [
-  // iPhone 15 Pro Max, iPhone 15 Plus, iPhone 14 Pro Max
+  // iPhone Air
+  { width: 420, height: 912, dpi: 3 },
+  // iPhone 17 Pro Max, iPhone 16 Pro Max
+  { width: 440, height: 956, dpi: 3 },
+  // iPhone 17 Pro, iPhone 17, iPhone 16 Pro
+  { width: 402, height: 874, dpi: 3 },
+  // iPhone 16 Plus, iPhone 15 Pro Max, iPhone 15 Plus, iPhone 14 Pro Max
   { width: 430, height: 932, dpi: 3 },
-  // iPhone 15 Pro, iPhone 15, iPhone 14 Pro
+  // iPhone 16, iPhone 15 Pro, iPhone 15, iPhone 14 Pro
   { width: 393, height: 852, dpi: 3 },
   // iPhone 14 Plus, iPhone 13 Pro Max, iPhone 12 Pro Max
   { width: 428, height: 926, dpi: 3 },
-  // iPhone 14, iPhone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12
+  // iPhone 16e, iPhone 14, iPhone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12
   { width: 390, height: 844, dpi: 3 },
   // iPhone 13 Mini, iPhone 12 Mini
   { width: 360, height: 780, dpi: 3 },
