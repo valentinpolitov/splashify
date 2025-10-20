@@ -40,28 +40,32 @@ splashify generate|gen [devices...] [options]
 
 #### Arguments
 
-devices: Specify devices by screen dimensions and density. Use the format **`{width}`x`{height}`@`{dpi}`**. If omitted, default devices are targeted:
+`devices`: Specify devices by screen dimensions and density. Use the format **`{width}`x`{height}`@`{dpi}`**. If omitted, default devices are targeted:
 
-| Width x Height @ DPI | Device                                                                    |
-| -------------------- | ------------------------------------------------------------------------- |
-| `430x932@3`          | iPhone 15 Pro Max, iPhone 15 Plus, iPhone 14 Pro Max                      |
-| `393x852@3`          | iPhone 15 Pro, iPhone 15, iPhone 14 Pro                                   |
-| `428x926@3`          | iPhone 14 Plus, iPhone 13 Pro Max, iPhone 12 Pro Max                      |
-| `390x844@3`          | iPhone 14, iPhone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12             |
-| `360x780@3`          | iPhone 13 Mini, iPhone 12 Mini                                            |
-| `414x896@3`          | iPhone 11 Pro Max, iPhone XS Max                                          |
-| `375x812@3`          | iPhone 11 Pro, iPhone XS, iPhone X                                        |
-| `414x896@2`          | iPhone 11, iPhone XR                                                      |
-| `414x736@3`          | iPhone 8 Plus, iPhone 7 Plus, iPhone 6s Plus                              |
-| `375x667@2`          | iPhone SE, iPhone 8, iPhone 7, iPhone 6s, iPhone 6                        |
-| `320x568@2`          | iPhone SE 4, iPhone 5s, iPhone 5c, iPhone 5, iPod Touch 5th Gen and later |
-| `1024x1366@2`        | iPad Pro 12.9", iPad Air 9.7", iPad Mini 7.9"                             |
-| `834x1194@2`         | iPad Pro 11"                                                              |
-| `820x1180@2`         | iPad Air 10.9"                                                            |
-| `834x1112@2`         | iPad Air 10.5", iPad Pro 10.5"                                            |
-| `810x1080@2`         | iPad 10.2"                                                                |
-| `768x1024@2`         | iPad Mini 7.9", iPad Pro 9.7"                                             |
-| `744x1133@2`         | iPad Mini 8.3"                                                            |
+| Width x Height @ DPI | Device                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `420x912@3`          | iPhone Air                                                                           |
+| `440x956@3`          | iPhone 17 Pro Max, iPhone 16 Pro Max                                                 |
+| `402x874@3`          | iPhone 17 Pro, iPhone 17, iPhone 16 Pro                                              |
+| `430x932@3`          | iPhone 16 Plus, iPhone 15 Pro Max, iPhone 15 Plus, iPhone 14 Pro Max                 |
+| `393x852@3`          | iPhone 16, iPhone 15 Pro, iPhone 15, iPhone 14 Pro                                   |
+| `428x926@3`          | iPhone 14 Plus, iPhone 13 Pro Max, iPhone 12 Pro Max                                 |
+| `390x844@3`          | iPhone 16e, iPhone 14, iPhone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12            |
+| `414x896@3`          | iPhone 11 Pro Max, iPhone XS Max                                                     |
+| `375x812@3`          | iPhone 13 Mini, iPhone 12 Mini, iPhone 11 Pro, iPhone XS, iPhone X                   |
+| `414x896@2`          | iPhone 11, iPhone XR                                                                 |
+| `414x736@3`          | iPhone 8 Plus, iPhone 7 Plus                                                         |
+| `375x667@2`          | iPhone SE 2nd Gen and later, iPhone 8, iPhone 7                                      |
+| `320x568@2`          | `[Legacy]` iPhone SE 4, iPhone 5s, iPhone 5c, iPhone 5, iPod Touch 5th Gen and later |
+| `834x1210@2`         | iPad Pro 7th Gen 11"                                                                 |
+| `1032x1376@2`        | iPad Pro 13"                                                                         |
+| `1024x1366@2`        | iPad Air 13", iPad Pro 12.9", iPad Air 9.7", iPad Mini 7.9"                          |
+| `834x1194@2`         | iPad Pro 3-6th Gen 11"                                                               |
+| `820x1180@2`         | iPad Air 4-6th Gen 11", iPad 10th Gen                                                |
+| `834x1112@2`         | iPad Air 3rd Gen 10.5", iPad Pro 2nd Gen 10.5"                                       |
+| `810x1080@2`         | iPad 7-9th Gen 10.2"                                                                 |
+| `744x1133@2`         | iPad Mini 6th Gen and later                                                          |
+| `768x1024@2`         | iPad Mini 4-5th Gen, iPad 3-6th Gen, iPad Pro 9.7"                                   |
 
 ## Customization Options
 
