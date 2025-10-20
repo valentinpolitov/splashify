@@ -5,16 +5,13 @@ import { iOSDevices } from "@/devices/ios";
 import { getDevice, getDeviceString } from "@/utils/device";
 
 const deviceSchema = z
-  .string()
-  .refine((value) => {
-    const { width, height, dpi } = getDevice(value);
-
-    const w = z.number().int().positive().safeParse(width);
-    const h = z.number().int().positive().safeParse(height);
-    const d = z.number().int().positive().safeParse(dpi);
-
-    return w.success && h.success && d.success;
-  })
+  .templateLiteral([
+    z.int().positive(),
+    z.literal("x"),
+    z.int().positive(),
+    z.literal("@"),
+    z.int().positive(),
+  ])
   .transform(getDevice);
 
 const extensionsSchema = z.enum([".svg", ".png", ".jpg", ".jpeg"]);
@@ -22,8 +19,7 @@ const imagePathSchema = z
   .string()
   .refine(
     (value) =>
-      extensionsSchema.safeParse(path.extname(value.toLocaleLowerCase()))
-        .success,
+      extensionsSchema.safeParse(path.extname(value).toLowerCase()).success,
     "The image must be an SVG, PNG, JPG, or JPEG file.",
   );
 
@@ -38,9 +34,9 @@ export const genOptionsSchema = z
     cwd: z.string(),
     input: imagePathSchema,
     background: z.string().optional(),
-    scale: z.string().pipe(z.coerce.number().positive()),
+    scale: z.coerce.number().positive(),
     outdir: z.string(),
-    hashLength: z.string().pipe(z.coerce.number().int().min(4)),
+    hashLength: z.coerce.number().int().min(4).default(8),
     prefix: z.string().optional(),
     includeOrientation: z.boolean(),
     def: z.boolean(),

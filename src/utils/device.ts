@@ -21,9 +21,9 @@ export function getDeviceString(device: Device): DeviceString {
 
 export function getMediaString(
   device: Device,
-  orientation: "portrait" | "landscape",
+  orientation?: "portrait" | "landscape" | null | undefined,
 ): string {
-  const { width, height, dpi } = device;
-
-  return `screen and (device-width: ${width}px) and (device-height: ${height}px) and (-webkit-device-pixel-ratio: ${dpi}) and (orientation: ${orientation})`;
+  const out = `screen and (device-width: ${device.width}px) and (device-height: ${device.height}px) and (-webkit-device-pixel-ratio: ${device.dpi})`;
+  if (!orientation) return out;
+  return `${out} and (orientation: ${orientation})`;
 }

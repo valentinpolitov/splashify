@@ -1,5 +1,14 @@
 # splashify
 
+## 0.3.1
+
+### Patch Changes
+
+- - Added new iOS devices
+  - Updated dependencies
+  - Format resource definitions with Prettier before saving
+  - Consistency in export formats across resource definitions files
+
 ## 0.3.0
 
 ### Minor Changes

@@ -4,6 +4,11 @@ import { loadImage } from "canvas";
 import chalk from "chalk";
 import { Command } from "commander";
 import ora from "ora";
+import prettierPluginBabel from "prettier/plugins/babel";
+import prettierPluginEstree from "prettier/plugins/estree";
+import prettierPluginHTML from "prettier/plugins/html";
+import prettierPluginTypescript from "prettier/plugins/typescript";
+import prettier from "prettier/standalone";
 
 import { iOSDevices } from "@/devices/ios";
 import { genOptionsSchema } from "@/schemas/gen";
@@ -83,7 +88,6 @@ export const gen = new Command()
     'when output directory is in public folder, this will truncate "public/" segment from generated url',
     true,
   )
-  .option("--no-public", "do not truncate public segment from generated url")
   .option("--portrait-only", "generate only portrait images", false)
   .option("--landscape-only", "generate only landscape images", false)
   .option("--json", "generate JSON file with resource definitions", false)
@@ -195,9 +199,11 @@ export const gen = new Command()
       // Scale SVG image to fit the widest device
       if (
         path.extname(imagePath).toLowerCase() === ".svg" &&
-        image.width < screen.widest
+        Number.isFinite(image.width) &&
+        image.width > 0
       ) {
-        image.height = (screen.widest * image.width) / image.height;
+        const factor = screen.widest / image.width;
+        image.height = Math.round(image.height * factor);
         image.width = screen.widest;
       }
 
@@ -213,7 +219,18 @@ export const gen = new Command()
       const result: Record<"url" | "media", string>[] = [];
 
       for (const device of options.devices) {
-        const [portrait, landscape] = await Promise.all([
+        // If the device is a square, we can use the same image for both orientations and ignore orientation flags
+        if (device.width === device.height) {
+          const imageUrl = await drawImage(device, image, "portrait", options);
+
+          if (!options.def) continue;
+
+          result.push({ url: imageUrl, media: getMediaString(device) });
+
+          continue;
+        }
+
+        const [portraitUrl, landscapeUrl] = await Promise.all([
           options.landscapeOnly
             ? null
             : drawImage(device, image, "portrait", options),
@@ -224,16 +241,16 @@ export const gen = new Command()
 
         if (!options.def) continue;
 
-        if (portrait) {
+        if (portraitUrl) {
           result.push({
-            url: portrait,
+            url: portraitUrl,
             media: getMediaString(device, "portrait"),
           });
         }
 
-        if (landscape) {
+        if (landscapeUrl) {
           result.push({
-            url: landscape,
+            url: landscapeUrl,
             media: getMediaString(device, "landscape"),
           });
         }
@@ -258,7 +275,7 @@ export const gen = new Command()
         try {
           mkdirSync(defOutdir, { recursive: true });
           logger.info(`Created directory ${defOutdir}`);
-        } catch (error) {
+        } catch {
           logger.error(
             `An error occurred while creating ${defOutdir} directory. File will be saved in ${outdir} directory.`,
           );
@@ -272,12 +289,15 @@ export const gen = new Command()
       const noFilesOutput = !options.html && !options.json && noJsFilesOutput;
 
       if (options.html || noFilesOutput) {
-        const html = result
-          .map(
-            (screen) =>
-              `<link rel="apple-touch-startup-image" href="${screen.url}" media="${screen.media}">`,
-          )
-          .join("\n");
+        const links = result.map(
+          (screen) =>
+            `<link rel="apple-touch-startup-image" href="${screen.url}" media="${screen.media}">`,
+        );
+
+        const html = await prettier.format(links.join("\n"), {
+          parser: "html",
+          plugins: [prettierPluginHTML],
+        });
 
         const file = path.join(
           defOutdir,
@@ -298,6 +318,8 @@ export const gen = new Command()
         return;
       }
 
+      const json = JSON.stringify(result, null, 2) as `[${string}]`;
+
       if (options.json) {
         const file = path.join(
           defOutdir,
@@ -306,7 +328,7 @@ export const gen = new Command()
             : options.defFile + ".json",
         );
 
-        writeFileSync(file, JSON.stringify(result, null, 2));
+        writeFileSync(file, json);
       }
 
       if (noJsFilesOutput) {
@@ -317,18 +339,6 @@ export const gen = new Command()
         }
         return;
       }
-
-      const jsContentString = result
-        .map((screen) =>
-          [
-            "  {",
-            `    url: "${screen.url}",`,
-            "    media:",
-            `      "${screen.media}",`,
-            `  },`,
-          ].join("\n"),
-        )
-        .join("\n");
 
       const extensions = (
         [
@@ -347,23 +357,33 @@ export const gen = new Command()
             : options.defFile + ext,
         );
 
-        if (ext === ".ts") {
-          writeFileSync(
-            file,
-            `export const resources: Record<"url" | "media", string>[] = [\n${jsContentString}\n];\n`,
-          );
-          continue;
-        }
+        const resType = 'Record<"url" | "media", string>[]';
+        const [header, typeAnnotation] =
+          ext === ".ts"
+            ? (["", `: ${resType}`] as const)
+            : ([`/** @type {${resType}} */`, ""] as const);
 
-        const content = ['/** @type {Record<"url" | "media", string>[]} */'];
+        const footer =
+          ext === ".cjs"
+            ? "module.exports = { resources }"
+            : "export { resources }";
 
-        if (ext === ".cjs") {
-          content.push(`module.exports = [\n${jsContentString}\n];\n`);
-        } else {
-          content.push(`export const resources = [\n${jsContentString}\n];\n`);
-        }
+        const content = [
+          header,
+          `const resources${typeAnnotation} = ${json}\n`,
+          footer,
+        ].join("\n");
 
-        writeFileSync(file, content.join("\n"));
+        const data = await prettier.format(content, {
+          parser: ext === ".ts" ? "typescript" : "babel",
+          plugins: [
+            prettierPluginBabel,
+            prettierPluginEstree,
+            prettierPluginTypescript,
+          ],
+        });
+
+        writeFileSync(file, data);
       }
 
       spinner.succeed("Done");
