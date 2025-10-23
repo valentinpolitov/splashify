@@ -1,5 +1,14 @@
 # splashify
 
+## 0.4.0
+
+### Minor Changes
+
+- Migrated renderer from `node-canvas` to `sharp`
+  💡 INSIGHTS:
+  ✅ Sharp is 2.2x faster - significant performance improvement
+  ✅ Sharp produces 2x smaller files - better compression
+
 ## 0.3.2
 
 ### Patch Changes

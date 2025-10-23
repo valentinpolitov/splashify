@@ -1,12 +1,13 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  clean: true,
-  dts: true,
+  clean: false,
   entry: ["src/index.ts"],
   format: ["esm"],
-  sourcemap: true,
   minify: true,
   target: "esnext",
   outDir: "dist",
+  banner: {
+    js: "#!/usr/bin/env node --harmony",
+  },
 });

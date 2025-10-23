@@ -1,6 +1,6 @@
-import type { Device } from "@/utils/device";
+import type { Device } from "@/schema/device";
 
-export const iOSDevices: Device[] = [
+export const presetIOS: Device[] = [
   // iPhone Air
   { width: 420, height: 912, dpi: 3 },
   // iPhone 17 Pro Max, iPhone 16 Pro Max

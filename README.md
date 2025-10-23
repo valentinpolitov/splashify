@@ -1,6 +1,6 @@
 # splashify
 
-[![npm version](https://badge.fury.io/js/splashify.svg)](https://badge.fury.io/js/splashify)
+[![npm version](https://badge.fury.io/js/splashify.svg?t=1761231000)](https://badge.fury.io/js/splashify)
 
 Splashify is a powerful CLI tool designed to simplify the creation of launch screens for any device, ensuring your application makes a great first impression.
 

@@ -2,32 +2,28 @@ import { readdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import prompts from "prompts";
 
-import type { GenOptions } from "@/schemas/gen";
-import { logger } from "@/utils/logger";
+import type { GenOptions } from "@/schema/gen";
+import { logger } from "@/util/logger";
 
 function removeFiles(dir: string, files: string[]): void {
-  for (const file of files) {
+  for (const f of files) {
     try {
-      unlinkSync(join(dir, file));
+      unlinkSync(join(dir, f));
     } catch {
-      logger.warn(`Failed to remove ${file}`);
+      logger.warn(`Failed to remove ${f}`);
     }
   }
 }
 
-export async function manageExistingFiles(
+async function manageExistingFiles(
   outdir: string,
   options: GenOptions,
 ): Promise<void> {
   const files = readdirSync(outdir);
-
   if (files.length === 0) return;
 
   if (options.keep && options.clean) {
-    logger.warn(
-      "You have specified both --keep and --clean options, which is contradictory.",
-    );
-
+    logger.warn("Both --keep and --clean were specified.");
     const response = await prompts(
       {
         type: "toggle",
@@ -44,32 +40,29 @@ export async function manageExistingFiles(
         },
       },
     );
-
-    if (response.value) {
-      removeFiles(outdir, files);
-    }
-
+    if (response.value) removeFiles(outdir, files);
     return;
   }
 
   if (options.keep) return;
-
   if (options.clean) return removeFiles(outdir, files);
 
   const response = await prompts({
     type: "confirm",
-    message: `${outdir} is not empty. Do you want to continue and potentially overwrite existing files?`,
+    message: `${outdir} is not empty. Continue and potentially overwrite existing files?`,
     name: "continue",
     initial: true,
   });
 
   if (!response.continue) {
     logger.warn("Generation canceled");
-    logger.info("Use --keep option to keep existing files");
+    logger.info("Use --keep to keep existing files");
     process.exit(1);
   }
 
   logger.info(
-    "Use --clean option to epmty the output directory before generation",
+    "Tip: use --clean to empty the output directory before generation",
   );
 }
+
+export { manageExistingFiles };

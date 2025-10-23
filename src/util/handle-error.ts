@@ -1,8 +1,8 @@
 import { ZodError } from "zod";
 
-import { logger } from "./logger";
+import { logger } from "@/util/logger";
 
-export function handleError(error: unknown): never {
+function handleError(error: unknown): never {
   if (typeof error === "string") {
     logger.error(error);
     process.exit(1);
@@ -23,3 +23,5 @@ export function handleError(error: unknown): never {
   logger.error("Something went wrong. Please try again.");
   process.exit(1);
 }
+
+export { handleError };
